@@ -8,6 +8,7 @@ import time
 board = Arduino('COM8')  # Update this to your correct port
 servo_horizontal = board.get_pin('d:9:s')   # Horizontal servo on pin 9
 servo_vertical = board.get_pin('d:12:s')    # Vertical servo on pin 12
+servo_blink = board.get_pin('d:13:s') 
 time.sleep(2)  # Allow Arduino to initialize
 
 # Video Capture
@@ -15,6 +16,7 @@ cap = cv2.VideoCapture(1)  # Change to 0 if needed
 screen_w, screen_h = 640, 480
 
 # MediaPipe Setup
+
 mp_face_mesh = mp.solutions.face_mesh
 mp_drawing = mp.solutions.drawing_utils
 face_mesh = mp_face_mesh.FaceMesh(refine_landmarks=True)
@@ -114,7 +116,7 @@ while True:
         servo_y = max(0, min(180, servo_y))
 
         # Move servos
-        servo_horizontal.write(servo_x)
+        servo_horizontal.write(servo_x)     
         servo_vertical.write(servo_y)
 
         # Show info
@@ -124,6 +126,8 @@ while True:
         if blink_dist < 5:
             cv2.putText(frame, "Blink Detected", (30, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            servo_blink.write(90)
+            print("triggered")
 
     cv2.imshow("Eye-Controlled Dual Servo", frame)
     if cv2.waitKey(1) & 0xFF == 27:  # ESC key
